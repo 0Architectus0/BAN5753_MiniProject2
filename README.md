@@ -34,5 +34,4 @@ subscribe (yes/no) for a term deposit. (Variable y: Target function)
 
 ## Contributing DSWG Members
 **Team : [Vincent Rodriguez](https://github.com/0Architectus0)**
-**Team : [](https://github.com/[github handle])(@slackHandle)**
 
