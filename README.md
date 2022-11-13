@@ -28,8 +28,8 @@ subscribe (yes/no) for a term deposit. (Variable y: Target function)
 - writeup/reporting
 
 ## Featured Notebooks/Analysis/Deliverables
-* [script/experimental](script/experimental.ipynb)
-* [docs/markdown/MiniProject2_Project_Review](link)
+* [script/experimental](script/experimentation.ipynb)
+* [docs/markdown/MiniProject2_Project_Review](docs/markdown/MiniProject2_Review.md)
 
 
 ## Contributing DSWG Members
