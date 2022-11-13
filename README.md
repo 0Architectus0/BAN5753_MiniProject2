@@ -28,7 +28,7 @@ subscribe (yes/no) for a term deposit. (Variable y: Target function)
 - writeup/reporting
 
 ## Featured Notebooks/Analysis/Deliverables
-* [script/experimental](link)
+* [script/experimental](script/experimental.ipynb)
 * [docs/markdown/MiniProject2_Project_Review](link)
 
 
