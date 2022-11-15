@@ -54,7 +54,7 @@ A quick spot check of the response, 'y', count revealed the class of interest wa
 |yes| 4640|
 
 
-*Initial Null Exploration*
+*Initial Null Counts*
 
 |age|job|marital|education|default|housing|loan|contact|month|day_of_week|duration|campaign|pdays|previous|poutcome|emp_var_rate|cons_price_idx|cons_conf_idx|euribor3m|nr_employed|  y|
 |---|---|-------|---------|-------|-------|----|-------|-----|-----------|--------|--------|-----|--------|--------|------------|--------------|-------------|---------|-----------|---|
@@ -85,15 +85,29 @@ Next, nulls were assessed, however, the description given for 'pdays' indicates 
 | married|24928|
 |  single|11568|
 
-Job, marital, education, default, housing, and loan all contained an "unknown" class. Since unknown is taken to mean there is no data were on concerning the feature, nulls replaced the class instances. Contact, month, day_of_week, and poutcome did not contain this "unknown" level so no changes were made to those features. 
+Job, marital, education, default, housing, and loan all contained an "unknown" class. Since "unknown" is taken to mean there is no data were on concerning the feature for the observation, unknown instances were replaced with NA values. Contact, month, day_of_week, and poutcome did not contain this "unknown" level so no changes were made to those features. 
 
-
+*Post-Transform Null Counts*
 |age|job|marital|education|default|housing|loan|contact|month|day_of_week|duration|campaign|pdays|previous|poutcome|emp_var_rate|cons_price_idx|cons_conf_idx|euribor3m|nr_employed|  y|
 |---|---|-------|---------|-------|-------|----|-------|-----|-----------|--------|--------|-----|--------|--------|------------|--------------|-------------|---------|-----------|---|
 |  0|  0|     80|     1731|   8597|    990| 990|      0|    0|          0|       0|       0|39673|       0|       0|           0|             0|            0|        0|          0|  0|
 
 ## EDA/descriptive statistics
 
+### Feature Correlation
+
+### Bivariate Analysis
+
 ## Processing/Cleaning
 Since we wanted to preserve any information presented from the null instances an indicator column was created for each feature containing nulls and the the nulls were filled with imputed values.
+
+A transformation pipeline was created to pipe the data into a numeric feature set to be used in training and testing a logistic regression model. The pipeline consisted of the following steps:
+- StringIndexer
+    - one for each categorial feature and the response 
+- OneHotEncoder - transforming each of the indexed string outputs to a one-hot encoded set
+- VectorAssembler - merging all features to a single vectorized feature
+- StandardScaler - rescaling the vectorized feature set
+
 ## Statistical Modeling
+After running the data through the pipeline described above we're have our entire dataset along with the rescaled vectorized feature set column. The data is randomly split into training and test sets and a logistic model created. 
+![Mod1](../assets/mod1_confusion_matrix.jpg)
