@@ -25,11 +25,13 @@ The objective of the classification is to identify clients who will subscribe (y
 - statistical modeling
 - writeup/reporting
 
-## Featured Notebooks/Analysis/Deliverables
+## Deliverables
+* [Data File](data/final_dataset.csv)
+* [Pickle file/Saved model file](models/)
+* [Model file](script/final_script.py)
+* [Readme file describing project details](docs/markdown/MiniProject2_Summary.md)
+* [Project Presentation](docs/markdown/output/MiniProject2_presentation.md)
 * [Experimention Notebook](script/experimentation.ipynb)
-* [MiniProject2 Project Review](docs/markdown/MiniProject2_Review.md)
-* [Project Presentation](docs/markdown/MiniProject2_Review.md)
-* [Models](models/)
 
 
 ## Contributing MiniProject2 Members
