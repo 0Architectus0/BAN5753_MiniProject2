@@ -95,7 +95,13 @@ Job, marital, education, default, housing, and loan all contained an "unknown" c
 ## EDA/descriptive statistics
 
 ### Feature Correlation
+Numeric features were evaluated for multicollinearity using a correlation matrix and the Pearson statitic.
+![pearson](../assets/pearson_corr_numeric.jpg)
 
+Three features were identified as having a high correlation coefficient: 
+1. euribor3m
+2. emp_var_rate
+3. nr_employed
 ### Bivariate Analysis
 
 ## Processing/Cleaning
@@ -110,4 +116,5 @@ A transformation pipeline was created to pipe the data into a numeric feature se
 
 ## Statistical Modeling
 After running the data through the pipeline described above we're have our entire dataset along with the rescaled vectorized feature set column. The data is randomly split into training and test sets and a logistic model created. 
+
 ![Mod1](../assets/mod1_confusion_matrix.jpg)
