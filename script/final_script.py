@@ -119,5 +119,35 @@ trainingSummary = lrModel.summary
 trainingSummary.accuracy
 print('Training set areaUnderROC: ' + str(trainingSummary.areaUnderROC))
 
-# Model1 to file
-lrModel.save("../models/lrModel1")
+# model1 parameter tuning
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
+evaluator = BinaryClassificationEvaluator()
+
+from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+
+# Create ParamGrid for Cross Validation
+paramGrid = (ParamGridBuilder()
+             .addGrid(lr.regParam, [0.01, 0.5, 2.0])# regularization parameter
+             .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])# Elastic Net Parameter (Ridge = 0)
+             .addGrid(lr.maxIter, [1, 5, 10])#Number of iterations
+             .build())
+
+cv = CrossValidator(estimator=lr, estimatorParamMaps=paramGrid, 
+                    evaluator=evaluator, numFolds=5)
+
+cvModel = cv.fit(train)
+
+predictions = cvModel.transform(test)
+print('Best Model Test Area Under ROC', evaluator.evaluate(predictions))
+
+weights = cvModel.bestModel.coefficients
+weights = [(float(w),) for w in weights]
+weightsDF = sqlContext.createDataFrame(weights, ["Feature Weight"])
+weightsDF.toPandas().head(10)
+
+best_model=cvModel.bestModel
+
+#####################
+# Model to file
+#####################
+lrModel.save("../models/_best/lrModel")
