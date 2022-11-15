@@ -1,37 +1,38 @@
-# Project Name
-MiniProject2 - Deposit opening classification
+# MiniProject2 - Deposit Opening Classification
+Project Status: Complete
 
-#### -- Project Status: [Active, On-Hold, Completed]
-
-## Project Intro/Objective
-The objective of the classification is to identify clients who will 
-subscribe (yes/no) for a term deposit. (Variable y: Target function)
+## Project Overview
+### Opportunity 
+The objective of the classification is to identify clients who will subscribe (yes/no) for a term deposit. 
 
 ### Methods Used
 * Inferential Statistics
 * EDA
 * K-Means Clustering
+* Imputation
+* Logisitic Regression
 
 ### Technologies
-* Python
-* PySpark
-* Pandas, jupyterlab
-
-## Project Description
-(Provide more detailed overview of the project.  Talk a bit about your data sources and what questions and hypothesis you are exploring. What specific data analysis/visualization and modelling work are you using to solve the problem? What blockers and challenges are you facing?  Feel free to number or bullet point things here)
+* Python v3.10.6
+* PySpark (Spark v3.3.1), Pandas, Matplotlib
+* Docker, JupyterLab, VS Code
 
 ## Needs of this project
 
+- data loading and transformation 
 - data exploration/descriptive statistics
 - data processing/cleaning
 - statistical modeling
 - writeup/reporting
 
 ## Featured Notebooks/Analysis/Deliverables
-* [script/experimental](script/experimentation.ipynb)
-* [docs/markdown/MiniProject2_Project_Review](docs/markdown/MiniProject2_Review.md)
+* [Experimention Notebook](script/experimentation.ipynb)
+* [MiniProject2 Project Review](docs/markdown/MiniProject2_Review.md)
+* [Project Presentation](docs/markdown/MiniProject2_Review.md)
+* [Models](models/)
 
 
-## Contributing DSWG Members
-**Team : [Vincent Rodriguez](https://github.com/0Architectus0)**
+## Contributing MiniProject2 Members
+**Team Member: [Vincent Rodriguez](https://github.com/0Architectus0)**
 
+**Team Member: [Bhawk Luthra](https://github.com/)**
