@@ -47,15 +47,15 @@ df3 = df_renamed.withColumn("wasPreviouslyContacted",when(df_renamed.pdays==999,
 df3 = df3.withColumn("pdays",when(df3.pdays==999,np.nan).otherwise(df3.pdays))
 
 df4 = df3.withColumn("marital",when(df3.marital=="unknown",np.nan).otherwise(df3.marital))\
-         .withColumn("marital_naind",when(df3.marital=="unknown",1).otherwise(0))\
+         .withColumn("marital_na_ind",when(df3.marital=="unknown",1).otherwise(0))\
          .withColumn("education",when(df3.education=="unknown",np.nan).otherwise(df3.education))\
-         .withColumn("education_naind",when(df3.education=="unknown",1).otherwise(0))\
+         .withColumn("education_na_ind",when(df3.education=="unknown",1).otherwise(0))\
          .withColumn("default",when(df3.default=="unknown",np.nan).otherwise(df3.default))\
-         .withColumn("default_naind",when(df3.default=="unknown",1).otherwise(0))\
+         .withColumn("default_na_ind",when(df3.default=="unknown",1).otherwise(0))\
          .withColumn("housing",when(df3.housing=="unknown",np.nan).otherwise(df3.housing))\
-         .withColumn("housing_naind",when(df3.housing=="unknown",1).otherwise(0))\
+         .withColumn("housing_na_ind",when(df3.housing=="unknown",1).otherwise(0))\
          .withColumn("loan",when(df3.loan=="unknown",np.nan).otherwise(df3.loan))\
-         .withColumn("load_naind",when(df3.loan=="unknown",1).otherwise(0))\
+         .withColumn("load_na_ind",when(df3.loan=="unknown",1).otherwise(0))\
          .withColumn("y_ind",when(df3.pdays=="no",0).otherwise(1))
 
 #####################
