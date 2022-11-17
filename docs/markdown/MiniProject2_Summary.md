@@ -128,3 +128,5 @@ After running the data through the pipeline described above, we're left with the
 
 ![mod2_cv_metrics](../assets/mod2_cv_metrics.jpg)
 ![Mod2_cv](../assets/mod2_cv_confusion_matrix.jpg)
+
+The best model was chosen to be Model1 due to the high lower false positives for the class of interest and a good level of accuracy. 
