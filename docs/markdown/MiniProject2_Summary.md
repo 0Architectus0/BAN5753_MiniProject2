@@ -93,6 +93,8 @@ Job, marital, education, default, housing, and loan all contained an "unknown" c
 |  0|  0|     80|     1731|   8597|    990| 990|      0|    0|          0|       0|       0|39673|       0|       0|           0|             0|            0|        0|          0|  0|
 
 ## EDA/descriptive statistics
+![numericDistribution](../assets/distribution.jpg)
+![boxwhisker](../assets/boxWhisker.jpg)
 
 ### Feature Correlation
 Numeric features were evaluated for multicollinearity using a correlation matrix and the Pearson statitic.
