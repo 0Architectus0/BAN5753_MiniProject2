@@ -94,6 +94,7 @@ Job, marital, education, default, housing, and loan all contained an "unknown" c
 
 ## EDA/descriptive statistics
 ![numericDistribution](../assets/distribution.jpg)
+
 ![boxwhisker](../assets/boxWhisker.jpg)
 
 ### Feature Correlation
@@ -120,15 +121,19 @@ A transformation pipeline was created to pipe the data into a numeric feature se
 After running the data through the pipeline described above, we're left with the entire dataset along with the rescaled vectorized feature set column. The vectorized feature column along with the label index are kept. The data is randomly split into training and test sets and a logistic model created. Different methods to sample the data in a stratified method were asssessed. The first model has the following metrics:
 
 ![mod1_metrics](../assets/mod1_metrics.jpg)
+
 ![Mod1](../assets/mod1_confusion_matrix.jpg)
 
 ![mod1_cv_metrics](../assets/mod1_cv_metrics.jpg)
+
 ![Mod1_cv](../assets/mod1_cv_confusion_matrix.jpg)
 
 ![mod2_cv_metrics](../assets/mod2_metrics.jpg)
+
 ![Mod2](../assets/mod2_confusion_matrix.jpg)
 
 ![mod2_cv_metrics](../assets/mod2_cv_metrics.jpg)
+
 ![Mod2_cv](../assets/mod2_cv_confusion_matrix.jpg)
 
 The best model was chosen to be Model1 due to the high lower false positives for the class of interest and a good level of accuracy. 

@@ -37,4 +37,4 @@ The objective of the classification is to identify clients who will subscribe (y
 ## Contributing MiniProject2 Members
 **Team Member: [Vincent Rodriguez](https://github.com/0Architectus0)**
 
-**Team Member: [Bhawk Luthra](https://github.com/)**
+~~Team Member: [Bhawk Luthra](https://github.com/)~~
