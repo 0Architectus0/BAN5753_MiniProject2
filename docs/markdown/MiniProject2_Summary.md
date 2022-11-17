@@ -115,6 +115,16 @@ A transformation pipeline was created to pipe the data into a numeric feature se
 - StandardScaler - rescaling the vectorized feature set
 
 ## Statistical Modeling
-After running the data through the pipeline described above we're have our entire dataset along with the rescaled vectorized feature set column. The data is randomly split into training and test sets and a logistic model created. 
+After running the data through the pipeline described above, we're left with the entire dataset along with the rescaled vectorized feature set column. The vectorized feature column along with the label index are kept. The data is randomly split into training and test sets and a logistic model created. Different methods to sample the data in a stratified method were asssessed. The first model has the following metrics:
 
+![mod1_metrics](../assets/mod1_metrics.jpg)
 ![Mod1](../assets/mod1_confusion_matrix.jpg)
+
+![mod1_cv_metrics](../assets/mod1_cv_metrics.jpg)
+![Mod1_cv](../assets/mod1_cv_confusion_matrix.jpg)
+
+![mod2_cv_metrics](../assets/mod2_metrics.jpg)
+![Mod2](../assets/mod2_confusion_matrix.jpg)
+
+![mod2_cv_metrics](../assets/mod2_cv_metrics.jpg)
+![Mod2_cv](../assets/mod2_cv_confusion_matrix.jpg)
