@@ -37,39 +37,24 @@ df=spark.read \
 #####################
 ## transform
 #####################
-df_renamed = df.withColumnRenamed("cons.price.idx","cons_price_idx")\
+df2 = df.withColumnRenamed("cons.price.idx","cons_price_idx")\
 .withColumnRenamed("emp.var.rate", "emp_var_rate")\
 .withColumnRenamed("cons.conf.idx","cons_conf_idx")\
 .withColumnRenamed("nr.employed", "nr_employed")
 
-df3 = df_renamed.withColumn("wasPreviouslyContacted",when(df_renamed.pdays==999,0).otherwise(1))
-
-df3 = df3.withColumn("pdays",when(df3.pdays==999,np.nan).otherwise(df3.pdays))
-
-df4 = df3.withColumn("marital",when(df3.marital=="unknown",np.nan).otherwise(df3.marital))\
-         .withColumn("marital_na_ind",when(df3.marital=="unknown",1).otherwise(0))\
-         .withColumn("education",when(df3.education=="unknown",np.nan).otherwise(df3.education))\
-         .withColumn("education_na_ind",when(df3.education=="unknown",1).otherwise(0))\
-         .withColumn("default",when(df3.default=="unknown",np.nan).otherwise(df3.default))\
-         .withColumn("default_na_ind",when(df3.default=="unknown",1).otherwise(0))\
-         .withColumn("housing",when(df3.housing=="unknown",np.nan).otherwise(df3.housing))\
-         .withColumn("housing_na_ind",when(df3.housing=="unknown",1).otherwise(0))\
-         .withColumn("loan",when(df3.loan=="unknown",np.nan).otherwise(df3.loan))\
-         .withColumn("load_na_ind",when(df3.loan=="unknown",1).otherwise(0))\
-         .withColumn("y_ind",when(df3.pdays=="no",0).otherwise(1))
-
 #####################
 ## feature selection
 #####################
-categorical_features = [t[0] for t in df4.dtypes if t[1] == 'string' and t[0] != "y"]
-numeric_features = [t[0] for t in df4.dtypes if t[1] != 'string' and t[0] != 'wasPreviouslyContacted' and t[0]!='y_int']
-
+categorical_features = [t[0] for t in df2.dtypes if t[1] == 'string' and t[0] != "y"]
+numeric_features = [t[0] for t in df2.dtypes if t[1] != 'string']
+response_feature = ["y"]
 #####################
 ## pipeline
 #####################
 
 indexers = [
-    StringIndexer(inputCol= col, outputCol="{0}_indexed".format(col))
+    StringIndexer(inputCol= col,
+                  outputCol="{0}_indexed".format(col))
     for col in categorical_features
 ]
 
@@ -92,34 +77,33 @@ scaler = StandardScaler()\
          .setOutputCol ("scaled_features")
          #.setHandleInvalid("skip")
 
-pipeline = Pipeline(stages=indexers + y_indexer + [encoder, assembler, scaler])
-df5 = pipeline.fit(df4).transform(df4)
+pipeline = Pipeline(stages=indexers + y_indexer +
+                    [encoder, assembler, scaler])
+df3 = pipeline.fit(df2).transform(df2)
 
 #####################
-# Export data to file
-#####################
-
-
-#####################
-# Build Models
+# Build Model - Null Model
 #####################
 
 # data split
-train, test = df5.randomSplit([0.8, 0.2], seed = 2018)
+train, test = df2.randomSplit([0.8, 0.2], seed = 2018)
 
 # Model1
-lr = LogisticRegression(featuresCol = 'scaled_features', labelCol = 'label', maxIter=5)
+lr = LogisticRegression(featuresCol = 'scaled_features',
+                        labelCol = 'label', maxIter=5)
 
 lrModel = lr.fit(train)
 
 predictions = lrModel.transform(test)
 
-# Model1 summary 
+# Model_initial summary 
 trainingSummary = lrModel.summary
 trainingSummary.accuracy
 print('Training set areaUnderROC: ' + str(trainingSummary.areaUnderROC))
 
-# model1 parameter tuning
+#####################
+# Tune Model - Null Model
+#####################
 from pyspark.ml.evaluation import BinaryClassificationEvaluator
 evaluator = BinaryClassificationEvaluator()
 
@@ -140,14 +124,116 @@ cvModel = cv.fit(train)
 predictions = cvModel.transform(test)
 print('Best Model Test Area Under ROC', evaluator.evaluate(predictions))
 
-weights = cvModel.bestModel.coefficients
-weights = [(float(w),) for w in weights]
-weightsDF = sqlContext.createDataFrame(weights, ["Feature Weight"])
-weightsDF.toPandas().head(10)
-
 best_model=cvModel.bestModel
 
 #####################
 # Model to file
 #####################
-lrModel.save("../models/_best/lrModel")
+lrModel.save("../models/lrModel1")
+
+###############################################################
+# Evaluate Model - Model1
+###############################################################
+training1Summary = lrModel.summary
+
+training1Summary.accuracy
+training1Summary.labels
+training1Summary.recallByLabel
+training1Summary.weightedFalsePositiveRate
+
+# high model accuracy but low recall given the imbalanced data set
+
+###############################################################
+# Transform: Oversample Data
+###############################################################
+from pyspark.sql.functions import col, asc, desc
+
+major_df = df3.filter(col('label') == 0.0)
+minor_df = df8.filter(col("label") == 1.0)
+ratio = int(major_df.count()/minor_df.count())
+print("ratio: {}".format(ratio))
+a = range(ratio)
+
+from pyspark.sql.functions import col, explode, array, lit
+# duplicate the minority rows
+oversampled_df = minor_df.withColumn("dummy",
+                                     explode(array([lit(x) for x in a])))
+                        .drop('dummy')
+
+# combine both oversampled minority rows and previous majority rows 
+combined_df = major_df.unionAll(oversampled_df)
+###############################################################
+# Build Model - Model2 - Oversampled minority class
+###############################################################
+lr2 = LogisticRegression(featuresCol = 'scaled_features',
+                         labelCol = 'label', maxIter=5)
+
+lrModel2 = lr2.fit(train_over)
+
+predictions_os = lrModel2.transform(test)
+mod2_accuarcy = lrModel2.summary.accuracy
+mod2_recallByLabel = lrModel2.summary.recallByLabel
+
+#predictions2 = lrModel2.transform(test_over)
+
+#####################
+# Tune Model2
+#####################
+from pyspark.ml.evaluation import BinaryClassificationEvaluator
+evaluator = BinaryClassificationEvaluator()
+
+from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+
+# Create ParamGrid for Cross Validation
+paramGrid = (ParamGridBuilder()
+             .addGrid(lr.regParam, [0.01, 0.5, 2.0])# regularization parameter
+             .addGrid(lr.elasticNetParam, [0.0, 0.5, 1.0])# Elastic Net Parameter (Ridge = 0)
+             .addGrid(lr.maxIter, [1, 5, 10])#Number of iterations
+             .build())
+
+cv = CrossValidator(estimator=lr2, estimatorParamMaps=paramGrid, 
+                    evaluator=evaluator, numFolds=5)
+
+cvModel = cv.fit(train_over)
+
+predictions_cv_os = cvModel.transform(test)
+print('Best Model Test Area Under ROC', evaluator.evaluate(predictions))
+
+best_model_oversampled = cvModel.bestModel
+
+#####################
+# Model to file
+#####################
+best_model_oversampled.save("../models/lrModel2")
+
+###############################################################
+# Evaluate Model - Model2 - Oversampled minority class
+###############################################################
+
+predictions2.select('label', 'scaled_features', 'rawPrediction',
+                    'prediction', 'probability').toPandas().head(5)
+
+# in the earlier example
+training2Summary = lrModel2.summary
+
+training2Summary.accuracy
+training2Summary.labels
+training2Summary.recallByLabel
+training2Summary.weightedFalsePositiveRate
+
+###############################################################
+# Graph Model - Model2, Confusion Matrix
+###############################################################
+y_true = predictions2.select("label")
+y_true = y_true.toPandas()
+
+y_pred = predictions2.select("prediction")
+y_pred = y_pred.toPandas()
+
+cnf_matrix = confusion_matrix(y_true, y_pred,labels=class_names)
+#cnf_matrix
+plt.figure()
+plot_confusion_matrix(cnf_matrix, classes=class_names,
+                      title='Confusion matrix')
+plt.show()
+
